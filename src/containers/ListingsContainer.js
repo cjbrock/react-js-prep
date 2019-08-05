@@ -1,25 +1,22 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { fetchListings } from '../redux/actions/listingsActions'
 
-export default class ListingsContainer extends Component {
-  state = {
-    listings: []
-  }
+class ListingsContainer extends Component {
   
   componentDidMount() {
-    fetch("http://localhost:3001/listings")
-    .then(res => res.json())
-    .then(listings => this.setState( { listings }))
+    this.props.fetchListings()
   }
   
  render(){   
-   if(this.state.listings.length === 0) {
+   if(this.props.listings.length === 0) {
      return <h1> Loading </h1>
    }
    return (
      <div>
        <ul>
-         {this.state.listings.map(listing => (
-           <div>
+         {this.props.listings.map(listing => (
+           <div key={listing.id}>
              <p>Name: {listing.name}</p>
              <p>Address: {listing.address}</p>
              <p>Price: ${listing.price}</p>
@@ -30,3 +27,11 @@ export default class ListingsContainer extends Component {
    )
  }
 }
+
+const mapStateToProps = state => {
+  return {
+    listings: state.listings
+  }
+}
+
+export default connect (mapStateToProps, { fetchListings })(ListingsContainer)
